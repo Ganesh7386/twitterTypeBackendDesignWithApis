@@ -147,7 +147,7 @@ app.get("/verifying/", verifyJwtToken, (req, res) => {
   console.log("end of verification");
 });
 
-app.get("/user/tweets/feed/", verifyJwtToken, (req, res) => {
+app.get("/user/tweets/feed/", verifyJwtToken, async (req, res) => {
   const { username, user_id } = req;
   // getting latest tweets of other people whom the present user follows
 
@@ -155,6 +155,15 @@ app.get("/user/tweets/feed/", verifyJwtToken, (req, res) => {
 and linked to following_userid in FOLLOWER tablr to user_id in TWEET table */
 
   const msg = `content is requested by ${username} with id ${user_id}`;
+  const gettingRecentTweetsOfUserQuery = `SELECT * FROM gettingRecentTweetsOfUser`;
+  try {
+    const recentTweetsOfPresentUser = await db.all(
+      gettingRecentTweetsOfUserQuery
+    );
+    res.status(200).send(recentTweetsOfPresentUser);
+  } catch (e) {
+    console.log(e.message);
+  }
   res.send({ msg });
 });
 
